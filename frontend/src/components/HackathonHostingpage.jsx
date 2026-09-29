@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import {
-  PartyPopper, Shapes, Calendar, Clock, Link, Image as ImageIcon,
+  Shapes, Image as ImageIcon,
   CheckCircle, ArrowRight, ArrowLeft, ChevronDown, Users, Trash2
 } from 'lucide-react';
 import axios from 'axios';
@@ -9,38 +9,30 @@ import { userContext } from '../hooks/AutoAuth';
 import { uploadImage } from '../utils/uploadImage';
 import { API_BASE_URL } from '../utils/api';
 
-const FormInput = ({ id, name, type, placeholder, value, onChange, icon, error }) => (
+const FormInput = ({ id, name, type, placeholder, value, onChange, error }) => (
   <div>
-    <div className="relative">
-      <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-500">
-        {icon}
-      </div>
-      <input
-        id={id}
-        name={name}
-        type={type}
-        placeholder={placeholder}
-        value={value}
-        onChange={onChange}
-        className={`df-input pl-11 ${error ? '!border-red-500' : ''}`}
-      />
-    </div>
+    <input
+      id={id}
+      name={name}
+      type={type}
+      placeholder={placeholder}
+      value={value}
+      onChange={onChange}
+      className={`df-input ${error ? '!border-red-500' : ''}`}
+    />
     {error && <p className="text-red-400 text-xs mt-1.5">{error}</p>}
   </div>
 );
 
-const FormSelect = ({ id, name, value, onChange, icon, error, children }) => (
+const FormSelect = ({ id, name, value, onChange, error, children }) => (
   <div>
     <div className="relative">
-      <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-500">
-        {icon}
-      </div>
       <select
         id={id}
         name={name}
         value={value}
         onChange={onChange}
-        className={`df-input pl-11 pr-10 appearance-none ${error ? '!border-red-500' : ''}`}
+        className={`df-input pr-10 appearance-none ${error ? '!border-red-500' : ''}`}
       >
         {children}
       </select>
@@ -268,8 +260,8 @@ export default function HackathonHostingpage() {
               <section>
                 <h2 className="text-xl font-bold text-white mb-8 text-center">Step 1: Core Details</h2>
                 <div className="space-y-6">
-                  <FormInput id="hackathon_name" name="hackathon_name" type="text" placeholder="My Awesome Hackathon" value={formData.hackathon_name} onChange={handleChange} icon={<PartyPopper size={18} />} error={errors.hackathon_name} />
-                  <FormSelect id="genre" name="genre" value={formData.genre} onChange={handleChange} icon={<Shapes size={18} />} error={errors.genre}>
+                  <FormInput id="hackathon_name" name="hackathon_name" type="text" placeholder="My Awesome Hackathon" value={formData.hackathon_name} onChange={handleChange} error={errors.hackathon_name} />
+                  <FormSelect id="genre" name="genre" value={formData.genre} onChange={handleChange} error={errors.genre}>
                     <option value="" disabled className="bg-[#0d0d1a]">Select a genre...</option>
                     <option className="bg-[#0d0d1a]" value="Online">Online</option>
                     <option className="bg-[#0d0d1a]" value="In-Person (University)">In-Person (University)</option>
@@ -289,11 +281,11 @@ export default function HackathonHostingpage() {
                 <h2 className="text-xl font-bold text-white mb-8 text-center">Step 2: Schedule & Rules</h2>
                 <div className="space-y-6">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    <FormInput id="starting_date" name="starting_date" type="datetime-local" value={formData.starting_date} onChange={handleChange} icon={<Calendar size={18} />} error={errors.starting_date} />
-                    <FormInput id="ending_date" name="ending_date" type="datetime-local" value={formData.ending_date} onChange={handleChange} icon={<Calendar size={18} />} error={errors.ending_date} />
+                    <FormInput id="starting_date" name="starting_date" type="datetime-local" value={formData.starting_date} onChange={handleChange} error={errors.starting_date} />
+                    <FormInput id="ending_date" name="ending_date" type="datetime-local" value={formData.ending_date} onChange={handleChange} error={errors.ending_date} />
                   </div>
-                  <FormInput id="duration" name="duration" type="text" placeholder="e.g., 48 Hours, 3 Days" value={formData.duration} onChange={handleChange} icon={<Clock size={18} />} error={errors.duration} />
-                  <FormInput id="rule_book" name="rule_book" type="url" placeholder="https://link-to-your/rulebook.pdf" value={formData.rule_book} onChange={handleChange} icon={<Link size={18} />} error={errors.rule_book} />
+                  <FormInput id="duration" name="duration" type="text" placeholder="e.g., 48 Hours, 3 Days" value={formData.duration} onChange={handleChange} error={errors.duration} />
+                  <FormInput id="rule_book" name="rule_book" type="url" placeholder="https://link-to-your/rulebook.pdf" value={formData.rule_book} onChange={handleChange} error={errors.rule_book} />
                 </div>
               </section>
             )}
@@ -312,7 +304,6 @@ export default function HackathonHostingpage() {
                           placeholder={`Criterion ${index + 1} description`}
                           value={criterion.description}
                           onChange={(e) => handleCriteriaChange(index, e)}
-                          icon={<CheckCircle size={18} />}
                           error={errors.criteria?.[index]?.description}
                         />
                       </div>
@@ -344,7 +335,6 @@ export default function HackathonHostingpage() {
                           placeholder={`Judge ${index + 1} username`}
                           value={judge.username}
                           onChange={(e) => handleJudgeChange(index, e)}
-                          icon={<Users size={18} />}
                           error={errors.judges?.[index]?.username}
                         />
                       </div>
