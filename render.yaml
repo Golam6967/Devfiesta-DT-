@@ -6,6 +6,7 @@ services:
     plan: free
     buildCommand: npm install
     startCommand: npm start
+    healthCheckPath: /health
     envVars:
       - key: PORT
         value: 4000
@@ -13,8 +14,10 @@ services:
         value: production
       - key: DB_HOST
         sync: false
+      # Managed MySQL hosts (Aiven, Railway, etc.) almost always use a
+      # non-default port - don't assume 3306 here.
       - key: DB_PORT
-        value: 3306
+        sync: false
       - key: DB_USER
         sync: false
       - key: DB_PASS
@@ -23,6 +26,11 @@ services:
         sync: false
       - key: DB_SSL
         value: true
+      # Aiven (and several other managed MySQL hosts) present a self-signed
+      # CA that Node's TLS stack won't trust by default. Without this, the
+      # connection fails with "self-signed certificate in certificate chain".
+      - key: DB_SSL_REJECT_UNAUTHORIZED
+        value: false
       - key: JWT_SECRET
         generateValue: true
       - key: JWT_EXPIRATION

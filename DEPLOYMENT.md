@@ -49,6 +49,8 @@ This also lets you list *multiple* allowed origins at once (production domain + 
 
 **The fix:** added `port: process.env.DB_PORT || 3306` and an opt-in SSL block gated by `DB_SSL=true`, so local Docker MySQL (which needs neither) is completely unaffected, and a managed host just needs its actual port + `DB_SSL=true` in the env vars.
 
+**A follow-up gotcha:** setting `DB_SSL=true` alone against Aiven still fails, with `self-signed certificate in certificate chain`. Aiven's MySQL presents a self-signed CA that Node's TLS stack doesn't trust by default — the `mysql` CLI didn't hit this earlier (its default `--ssl-mode=REQUIRED` only requires encryption, not full chain verification), but `mysql2`'s default `ssl: {}` does verify the chain. Fixed with a second opt-in flag, `DB_SSL_REJECT_UNAUTHORIZED=false`, which relaxes chain verification while keeping the connection encrypted. This is standard practice for connecting to managed databases that don't hand you their CA cert to pin.
+
 ### 2.4 No database schema existed anywhere in the repo
 
 **The problem:** the entire schema lived only as tribal knowledge in the raw SQL queries scattered across 5 model files — there was no `CREATE TABLE` script to run against a fresh database. This was fixed earlier in this project's history (see [`Backend/db/schema.sql`](Backend/db/schema.sql)), but it's worth restating here: **you cannot deploy a database-backed app without a way to reproducibly create its schema.** Whatever you migrate to (a managed MySQL host here, Neon/Postgres in a different project), the very first deploy step is always "run schema.sql against the new empty database."
@@ -91,7 +93,9 @@ Any managed MySQL host works the same way; **Aiven's free tier** is a solid defa
 3. When prompted, fill in the `sync: false` values:
    - `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASS`, `DB_NAME` — from step 3.1
    - `CORS_ORIGIN` — leave a placeholder like `http://localhost:3000` for now; you'll update it once the frontend has a real URL (step 3.3)
-4. Deploy. Check the logs for `✅ Connected to MySQL database successfully!` — if you instead see a connection error, it's almost always `DB_SSL` not being `true` or the wrong `DB_PORT`.
+4. Deploy. Check the logs for `✅ Connected to MySQL database successfully!` — if you instead see a connection error:
+   - `self-signed certificate in certificate chain` → `DB_SSL_REJECT_UNAUTHORIZED` isn't `false` (the blueprint sets this already, but double-check it wasn't overridden)
+   - anything else → check `DB_SSL` is `true` and `DB_PORT` matches your host's actual port (not 3306)
 5. Note your backend's public URL, e.g. `https://devfiesta-backend.onrender.com`.
 
 ### 3.3 Deploy the frontend (Vercel)
