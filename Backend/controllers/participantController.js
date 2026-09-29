@@ -1,5 +1,6 @@
 const Team = require("../models/participants");
 const ResponseHandler = require("../utils/responseHandler");
+const { emitLeaderboardUpdate } = require("../socket");
 
 class participantController {
 
@@ -73,6 +74,10 @@ class participantController {
             console.log(req.body)
             
             await Team.team_marking(team_id, hackathon_id, judge_username, criteria_ids, marks, comments);
+
+            Team.leader_board(hackathon_id)
+                .then((leaderboard) => emitLeaderboardUpdate(hackathon_id, leaderboard))
+                .catch((err) => console.error("Failed to broadcast leaderboard update:", err));
 
             return ResponseHandler.success(res, { team_id, hackathon_id }, "Team marked successfully");
         } catch (error) {
@@ -157,6 +162,11 @@ class participantController {
         try {
             const { team_id, hackathon_id, judge_username, criteria_ids, marks } = req.body;
             await Team.update_Judges_marking(hackathon_id, judge_username, team_id, criteria_ids, marks);
+
+            Team.leader_board(hackathon_id)
+                .then((leaderboard) => emitLeaderboardUpdate(hackathon_id, leaderboard))
+                .catch((err) => console.error("Failed to broadcast leaderboard update:", err));
+
             return ResponseHandler.success(res, { team_id, hackathon_id }, "Marks updated successfully");
         } catch (error) {
             console.error("Error updating judge marks:", error);

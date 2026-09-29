@@ -1,4 +1,5 @@
 require('dotenv').config();
+const http = require("http");
 const express = require("express");
 const cors = require("cors");
 const authRoutes = require("./routes/auth");
@@ -8,7 +9,10 @@ const participationRoutes = require('./routes/participation')
 const { testConnection } = require("./config/database");
 const pblRoutes= require('./routes/pbl')
 const notificationRoutes = require('./routes/notification')
+const { initSocket } = require("./socket");
 const app = express();
+const server = http.createServer(app);
+initSocket(server);
 
 
 console.log("DB_HOST:", process.env.DB_HOST);
@@ -54,6 +58,6 @@ process.on("unhandledRejection", (reason, promise) => {
   console.error("💥 Unhandled Rejection:", reason);
 });
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

@@ -1,9 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { IoMdSearch, IoIosClose } from "react-icons/io";
+import { IoIosClose } from "react-icons/io";
 import { FaAngleDown } from "react-icons/fa";
-import { CgProfile } from "react-icons/cg";
-import { IoMdNotificationsOutline } from "react-icons/io";
+import { Search, Bell, UserRound } from 'lucide-react';
 import axios from 'axios';
 import Logo from '../Images/logo.png';
 import { userContext } from '../hooks/AutoAuth';
@@ -196,16 +195,16 @@ const Navbar = () => {
                                 />
                             </form>
                         ) : (
-                            <div className='flex items-center gap-4'>
-                                <button onClick={() => setIsSearchVisible(true)} aria-label="Search" className='inline-flex items-center justify-center h-9 w-9 flex-shrink-0'>
-                                    <IoMdSearch className='h-6 w-6 text-gray-300 hover:text-white transition-colors' />
+                            <div className='flex items-center gap-2'>
+                                <button onClick={() => setIsSearchVisible(true)} aria-label="Search" className='inline-flex items-center justify-center h-9 w-9 flex-shrink-0 rounded-full text-gray-300 hover:text-white hover:bg-white/10 transition-colors'>
+                                    <Search className='h-[18px] w-[18px]' strokeWidth={1.75} />
                                 </button>
 
                                 <div ref={notifRef} className='relative flex items-center'>
-                                    <button onClick={toggleNotifications} className='relative inline-flex items-center justify-center h-9 w-9 flex-shrink-0' aria-label="Notifications">
-                                        <IoMdNotificationsOutline className='h-6 w-6 text-gray-300 hover:text-white transition-colors' />
+                                    <button onClick={toggleNotifications} className='relative inline-flex items-center justify-center h-9 w-9 flex-shrink-0 rounded-full text-gray-300 hover:text-white hover:bg-white/10 transition-colors' aria-label="Notifications">
+                                        <Bell className='h-[18px] w-[18px]' strokeWidth={1.75} />
                                         {unreadCount > 0 && (
-                                            <span className='absolute top-1 right-1 bg-pink-500 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center'>
+                                            <span className='absolute top-0.5 right-0.5 bg-pink-500 text-white text-[10px] font-bold min-w-[16px] h-4 px-1 rounded-full flex items-center justify-center ring-2 ring-[#0a0a14]'>
                                                 {unreadCount > 9 ? '9+' : unreadCount}
                                             </span>
                                         )}
@@ -239,10 +238,13 @@ const Navbar = () => {
                                             alt="Profile"
                                         />
                                     ) : (
-                                        <CgProfile
+                                        <button
                                             onClick={() => setShowProfileDropdown(p => !p)}
-                                            className='cursor-pointer h-9 w-9 text-gray-300 hover:text-white transition-colors'
-                                        />
+                                            aria-label="Profile"
+                                            className='cursor-pointer h-9 w-9 rounded-full flex items-center justify-center bg-white/10 text-gray-200 hover:bg-white/15 hover:text-white ring-2 ring-white/10 transition-colors'
+                                        >
+                                            <UserRound className='h-[18px] w-[18px]' strokeWidth={1.75} />
+                                        </button>
                                     )}
 
                                     {showProfileDropdown && (

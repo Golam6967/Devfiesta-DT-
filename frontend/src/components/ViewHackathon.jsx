@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
-import { Calendar, Globe, Award, ChevronRight, Trophy } from 'lucide-react';
+import { Calendar, Globe, Award, ChevronRight, Trophy, Radio } from 'lucide-react';
 import axios from 'axios';
-import { API_BASE_URL } from '../utils/api';
+import { io } from 'socket.io-client';
+import { API_BASE_URL, SOCKET_URL } from '../utils/api';
 
 const formatDuration = (ms) => {
     if (ms <= 0) return '0s';
@@ -40,6 +41,27 @@ const Leaderboard = ({ hackathonId, isHost }) => {
     const [declaring, setDeclaring] = useState(false);
     const [championMessage, setChampionMessage] = useState('');
     const [error, setError] = useState('');
+    const [isLive, setIsLive] = useState(false);
+
+    useEffect(() => {
+        if (!hackathonId || !isOpen) return;
+
+        const socket = io(SOCKET_URL, { transports: ['websocket'] });
+
+        socket.on('connect', () => {
+            socket.emit('join-leaderboard', hackathonId);
+            setIsLive(true);
+        });
+        socket.on('disconnect', () => setIsLive(false));
+        socket.on('leaderboard:update', (updated) => {
+            setRows(updated || []);
+        });
+
+        return () => {
+            socket.emit('leave-leaderboard', hackathonId);
+            socket.disconnect();
+        };
+    }, [hackathonId, isOpen]);
 
     const fetchLeaderboard = () => {
         const token = localStorage.getItem('token');
@@ -83,6 +105,11 @@ const Leaderboard = ({ hackathonId, isHost }) => {
             <div className="flex items-center justify-between flex-wrap gap-3">
                 <h2 className="text-2xl font-bold text-white flex items-center gap-2">
                     <Trophy className="h-6 w-6 text-amber-400" /> Leaderboard
+                    {isLive && (
+                        <span className="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-300 bg-emerald-500/10 border border-emerald-500/30 rounded-full px-2 py-0.5">
+                            <Radio className="h-3 w-3" /> Live
+                        </span>
+                    )}
                 </h2>
                 <button onClick={handleToggle} className="df-btn-secondary !py-2 !px-4 text-sm">
                     {isOpen ? 'Hide Leaderboard' : 'View Leaderboard'}
