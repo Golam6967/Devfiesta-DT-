@@ -1,0 +1,144 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Lexend:wght@500;600;700;800&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Lexend', ui-sans-serif, system-ui, sans-serif;
+
+  --color-bg: #06060d;
+  --color-surface: #0d0d1a;
+  --color-brand-indigo: #6366f1;
+  --color-brand-purple: #a855f7;
+  --color-brand-pink: #ec4899;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-bg);
+  color: #f4f4f7;
+  font-family: var(--font-sans);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+}
+
+::selection {
+  background: rgba(168, 85, 247, 0.35);
+}
+
+/* Reusable primitives, applied across the app for a consistent dark/glow aesthetic */
+
+.df-page {
+  min-height: 100vh;
+  width: 100%;
+  background: var(--color-bg);
+  position: relative;
+  isolation: isolate;
+}
+
+.df-glow-bg::before,
+.df-glow-bg::after {
+  content: '';
+  position: fixed;
+  width: 40rem;
+  height: 40rem;
+  border-radius: 9999px;
+  filter: blur(120px);
+  z-index: -1;
+  opacity: 0.25;
+  pointer-events: none;
+}
+
+.df-glow-bg::before {
+  top: -10rem;
+  left: -10rem;
+  background: radial-gradient(circle, var(--color-brand-indigo), transparent 70%);
+}
+
+.df-glow-bg::after {
+  bottom: -12rem;
+  right: -10rem;
+  background: radial-gradient(circle, var(--color-brand-pink), transparent 70%);
+}
+
+.df-card {
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 1rem;
+}
+
+.df-input {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 0.75rem;
+  padding: 0.875rem 1rem;
+  color: #f4f4f7;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.df-input::placeholder {
+  color: rgba(244, 244, 247, 0.4);
+}
+
+.df-input:focus {
+  outline: none;
+  border-color: var(--color-brand-purple);
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.df-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  color: white;
+  border-radius: 0.75rem;
+  padding: 0.875rem 1.75rem;
+  background-image: linear-gradient(to right, var(--color-brand-indigo), var(--color-brand-purple), var(--color-brand-pink));
+  box-shadow: 0 8px 24px -8px rgba(168, 85, 247, 0.6);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+}
+
+.df-btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 28px -8px rgba(168, 85, 247, 0.75);
+}
+
+.df-btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.df-btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  color: #f4f4f7;
+  border-radius: 0.75rem;
+  padding: 0.875rem 1.75rem;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.df-btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.df-text-gradient {
+  background-image: linear-gradient(to right, var(--color-brand-indigo), var(--color-brand-purple), var(--color-brand-pink));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}

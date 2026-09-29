@@ -1,0 +1,23 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: devfiesta-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-rootpass}
+      MYSQL_DATABASE: ${DB_NAME:-devfiesta}
+      MYSQL_USER: ${DB_USER:-devfiesta}
+      MYSQL_PASSWORD: ${DB_PASS:-devfiesta}
+    ports:
+      - "${DB_PORT:-3306}:3306"
+    volumes:
+      - devfiesta-mysql-data:/var/lib/mysql
+      - ./Backend/db/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_ROOT_PASSWORD:-rootpass}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  devfiesta-mysql-data:
