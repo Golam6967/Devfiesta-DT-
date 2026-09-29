@@ -40,6 +40,10 @@ app.get("/", (req, res) => {
   res.send("API is working!");
 });
 
+app.get("/health", (req, res) => {
+  res.status(200).json({ status: "ok" });
+});
+
 const PORT = process.env.PORT || 5000;
 
 process.on("uncaughtException", (err) => {
